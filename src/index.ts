@@ -1,33 +1,49 @@
-export const fetchWithError = <Result>(queryFunc: any, ...fetchParams: any) => {
+const getAsyncFuncWithError = <Result>(
+  asyncFunc: any = fetch,
+  timeout = 1000,
+  ...params: any
+) => {
   let result: Result | null = null;
   let error: Error | null = null;
+  let curQuery: Promise<Result> | null = null;
 
-  let finalQueryFunc = queryFunc;
-  const finalQueryParams = [...fetchParams];
-  if (typeof queryFunc !== 'function') {
-    finalQueryFunc = fetch;
-    finalQueryParams.unshift(queryFunc);
-  }
+  let expiration = -1;
 
   return () => {
+    const now = new Date().getTime();
+
+    if (expiration !== -1 && now > expiration) {
+      result = null;
+      error = null;
+      curQuery = null;
+    }
+
     if (result) {
       return result;
     }
+
     if (error) {
       throw error;
     }
-    const _curQuery = finalQueryFunc(...finalQueryParams)
+
+    if (curQuery) {
+      throw curQuery;
+    }
+
+    curQuery = asyncFunc(...params)
       .then((res: Result) => {
         result = res;
+        expiration = new Date().getTime() + timeout;
       })
       .catch((err: Error) => {
         error = err;
+        expiration = new Date().getTime() + timeout;
       });
-    throw _curQuery;
+    throw curQuery;
   };
 };
 
-export const tryRunSync = (syncFun: () => void) => {
+const tryRunSyncFunc = (syncFun: () => void) => {
   try {
     syncFun();
   } catch (err) {
@@ -44,3 +60,5 @@ export const tryRunSync = (syncFun: () => void) => {
     throw err;
   }
 };
+
+export { getAsyncFuncWithError, tryRunSyncFunc };

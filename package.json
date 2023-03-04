@@ -1,6 +1,6 @@
 {
   "name": "sync-run",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "jsnext:source": "./src/index.ts",
   "types": "./dist/types/index.d.ts",
   "main": "./dist/lib/index.js",
@@ -19,7 +19,8 @@
     "gen-release-note": "modern gen-release-note",
     "release": "modern release",
     "new": "modern new",
-    "upgrade": "modern upgrade"
+    "upgrade": "modern upgrade",
+    "test": "modern test"
   },
   "lint-staged": {
     "*.{ts,tsx}": [
@@ -51,7 +52,8 @@
     "@types/node": "~16.11.7",
     "@types/react": "~18.0.26",
     "@modern-js/plugin-storybook": "2.7.0",
-    "@modern-js/runtime": "2.7.0"
+    "@modern-js/runtime": "2.7.0",
+    "@modern-js/plugin-testing": "2.7.0"
   },
   "sideEffects": [],
   "publishConfig": {
